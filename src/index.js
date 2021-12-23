@@ -6,7 +6,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from './components/Home';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
-
+import Details from './components/Details';
+import Add from './components/Add';
 import reportWebVitals from './reportWebVitals';
 import { render } from '@testing-library/react';
 
@@ -17,7 +18,8 @@ render(
     <Route path="/" element={<Home />} />
     <Route path="signin" element={<SignIn />} />
     <Route path="signup" element={<SignUp />} />
-
+    <Route path="details" element={<Details />} />
+    <Route path="add" element={<Add />} />
     </Routes>
   </BrowserRouter>,
   rootElement
