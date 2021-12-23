@@ -8,7 +8,7 @@ const Container = styled.div`
     justify-content: center;
     height: 100vh;
 `;
-export default function Details() {
+export default function Details(props) {
   return ( 
   <>      
     <Navbar />
@@ -16,7 +16,9 @@ export default function Details() {
 
             <div className="row">
                 <div className="col-md-6">
-                    <h1 style={{color: "white"}}>Welcome to Details</h1>
+                    <h1 style={{color: "white"}}>Welcome to Details about</h1>
+                    <h1 style={{color: "white"}}>{props.film.title}</h1>
+
                     </div>
                 </div>
         </Container>
