@@ -58,3 +58,6 @@
 label{
   color:white !important;
 }
+.ant-form-item-label > label .ant-form-item-tooltip{
+  color:white;
+}
