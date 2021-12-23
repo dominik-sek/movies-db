@@ -9,7 +9,7 @@ const TopNavigation = styled.nav`
     height: 50px;
     display: flex;
     align-items: center;
-    position: absolute;
+    position: fixed;
     left:0;
     z-index: 999;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
@@ -23,18 +23,21 @@ const Button = styled.button`
     font-size: 1rem;
 `
 
-export default function Navbar(){
+export default function Navbar() {
 
     return (
-        <TopNavigation >
 
-            <Link to="/">  <Button>Home</Button></Link> {/* change to logo */}
-            <Link to="/signup" style={{marginLeft: 'auto'}}>   <Button>Sign up</Button></Link> 
-            
+        <TopNavigation >
+            <nav style={{ width: '70%', margin: '0 auto', display:'flex' }}>
+                <Link to="/">  <Button>Home</Button></Link> {/* change to logo */}
+                <Link to="/signin" >   <Button>Sign in</Button></Link>
+                <Link to="/signup" style={{marginLeft:'auto'}}>   <Button>Sign up</Button></Link>
+            </nav>
         </TopNavigation>
+
     )
 
 }
 
 
- ;
+;
