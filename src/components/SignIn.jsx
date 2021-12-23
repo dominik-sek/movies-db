@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Form, Input, Button, Checkbox } from 'antd';
 import './styles.css'
 import { rgbToHex } from "@mui/material";
+import { Link } from 'react-router-dom';
+
 
 const Container = styled.div`
     display: flex;
@@ -27,10 +29,10 @@ export default function SignIn() {
       <Navbar />
       <Container>
 
-      
+
         <Form
           name="basic"
-          style={{ width:'35%', padding: '20px',border: '1px solid white'}}
+          style={{ width: '35%', padding: '20px', border: '1px solid white' }}
           labelCol={{
             span: 6,
           }}
@@ -44,11 +46,13 @@ export default function SignIn() {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-        <div style={{display:'flex', justifyContent:'center', padding:'15px'}}>
+                    <h1 style={{ color: 'white' }}> LOGO</h1>
 
-          <h1 style={{color:'white'}}> logo here</h1>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '15px' }}>
 
-        </div>
+            <h1 style={{ color: 'white' }}> Login</h1>
+
+          </div>
           <Form.Item
             label="Username"
             name="username"
@@ -93,9 +97,10 @@ export default function SignIn() {
               span: 16,
             }}
           >
-            <Button type="primary" htmlType="submit" style={{cursor:'pointer !important'}}>
-              Submit
+            <Button type="primary" htmlType="submit" style={{cursor:'pointer !important'}} className="login-form-button">
+              Log in
             </Button>
+            Or <Link to="/signup"> register now!</Link>
           </Form.Item>
         </Form>
 
