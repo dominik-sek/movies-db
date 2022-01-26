@@ -2,6 +2,10 @@ import Navbar from "./Navbar";
 import styled from 'styled-components';
 import React, { useState } from 'react';
 import './styles.css';
+import axios from 'axios';
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+
 
 import {
     Form,
@@ -9,8 +13,12 @@ import {
     Select,
     Checkbox,
     Button,
+    message,
+    Typography
 } from 'antd';
 const { Option } = Select;
+const { Paragraph, Text } = Typography;
+
 
 const Container = styled.div`
     display: flex;
@@ -55,12 +63,45 @@ const tailFormItemLayout = {
 
 
 
-export default function SignUp() {
+export default function SignUp(props) {
     const [form] = Form.useForm();
+    const navigate = useNavigate();
+    const handleChangeRoute = (e) => {
+        message.success('You can now log in');
+          setTimeout(()=>{
+            navigate('/signin');
+          },500)
+    
+      }
+
+    const registerUser = () =>{
+        let login = form.getFieldValue('login');
+        let password = form.getFieldValue('password');
+        let email = form.getFieldValue('email');
+
+        if(login && password && email){
+            axios({
+                method: 'post',
+                url: 'https://pr-movies.herokuapp.com/api/user/create',
+                data: {
+                    name: login,
+                    email: email,
+                    password: password,
+                }
+            }).then((response) =>{
+                console.log(response.data);
+                handleChangeRoute();
+            }).catch((err)=>{
+                console.log(err.response.data);
+                message.error(err.response.data);
+            })
+        }
+    }
+
     return (
         <>
 
-            <Navbar />
+            <Navbar component={"SignUp"} />
             <Container>
 
                 <Form
@@ -79,18 +120,37 @@ export default function SignUp() {
                         
                     </div>
                     <Form.Item
-                        name="email"
-                        label="E-mail"
+                        name="login"
+                        label="login"
+                        tooltip="What will your username be?"
                         rules={[
                             {
-                                type: 'email',
-                                message: 'The input is not valid E-mail!',
-                            },
-                            {
                                 required: true,
-                                message: 'Please input your E-mail!',
+                                message: 'Please input your login!',
+                                whitespace: true,
                             },
                         ]}
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="email"
+                        label="E-mail"
+                        // rules={
+                        //     [
+                        //         {
+                        //         type: 'email',
+                        //         message: 'The input is not valid E-mail!',
+                        //         required: true,
+                        //         },
+                        //         {
+                        //         message: 'Please input your E-mail!',
+                        //         },
+                                
+ 
+                        //     ]
+                        // }
                     >
                         <Input />
                     </Form.Item>
@@ -133,61 +193,9 @@ export default function SignUp() {
                         <Input.Password />
                     </Form.Item>
 
-                    <Form.Item
-                        name="nickname"
-                        label="Nickname"
-                        tooltip="What do you want others to call you?"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your nickname!',
-                                whitespace: true,
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
 
-
-
-
-
-
-                    <Form.Item
-                        name="gender"
-                        label="Gender"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please select gender!',
-                            },
-                        ]}
-                    >
-                        <Select placeholder="select your gender">
-                            <Option value="male">Male</Option>
-                            <Option value="female">Female</Option>
-                            <Option value="other">Other</Option>
-                        </Select>
-                    </Form.Item>
-
-
-                    <Form.Item
-                        name="agreement"
-                        valuePropName="checked"
-                        rules={[
-                            {
-                                validator: (_, value) =>
-                                    value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
-                            },
-                        ]}
-                        {...tailFormItemLayout}
-                    >
-                        <Checkbox>
-                            I have read the <a href="">agreement</a>
-                        </Checkbox>
-                    </Form.Item>
                     <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" onClick={registerUser} htmlType="submit">
                             Register
                         </Button>
                     </Form.Item>

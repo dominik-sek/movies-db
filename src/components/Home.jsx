@@ -4,6 +4,8 @@ import React from "react";
 import Divider from '@mui/material/Divider';
 import { Card } from 'antd';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useNavigate, useLocation } from "react-router-dom";
 
 
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -19,8 +21,6 @@ import SwiperCore, {
 SwiperCore.use([Navigation]);
 
 const { Meta } = Card;
-
-
 
 const Container = styled.div`
     display: flex;
@@ -42,10 +42,10 @@ const SwiperContainer = styled.div`
     `;
 const ContentContainer = styled.div`
     width: 100%;
-    height:40vh;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    flex-flow: wrap-reverse;
+    justify-content: space-between;
     `;
 const Watchlist = styled.div`
     width: 100%;
@@ -56,38 +56,89 @@ const Watchlist = styled.div`
     align-items: center;
     justify-content: center;
     `;
+
+const callApi = async () => {
+    const response = await axios.get('https://pr-movies.herokuapp.com/api/movies');
+    return response.data;
+};
+
+let FILMS_SORTED = [];
+let FILMS_RANDOM = [];
+
+const sortMovies = (movieList) =>{
+    movieList.forEach(movie =>{
+        //if length of movie.title is > 4
+        if(movie.title !== undefined && movie.title !== "" && movie.title.length > 4){
+            if(!movie.content.includes("localhost") && movie.image.includes("http")){
+                FILMS_SORTED.push(movie);
+            }
+        }
+    });
+}
+
+const randomizeMovies = () =>{
+    let random = Math.floor(Math.random() * FILMS_SORTED.length);
+    for (let i = 0; i<5; i++){
+        FILMS_RANDOM.push(FILMS_SORTED[random]);
+        random = Math.floor(Math.random() * FILMS_SORTED.length);
+    }
+}
+
+
+
+
 export default function Home(props) {
-    const FILM_DATA = props.FILM_DATA;
+    const [movies, setMovies] = React.useState([]);
+    const [allMovies, setAllMovies] = React.useState([]);
+    const location = useLocation();
+
+    
+    React.useEffect(() => {
+        callApi().then(data => {
+            sortMovies(data);
+            randomizeMovies();
+            setMovies(FILMS_RANDOM);
+            setAllMovies(FILMS_SORTED);
+            FILMS_RANDOM = [];
+            FILMS_SORTED = [];
+        })}, []);
+    
+
+    
+    //api call to get films, need to sort it by uniqueness and remove ones without titles or content 
+    //get 5 from the top
+    
     return (
 
         <div style={{ width: '70%', margin: 'auto',position:'relative' }}>
         
-            <Navbar />
+            <Navbar component={"Home"} isLoggedIn={location.state != null ? location.state.isLoggedIn : false} token={location.state != null ? location.state.token : null} />
              <Container>
+             <h1 style={{ color: 'white' }}>Featured Today:</h1>
                 <SwiperContainer>
-                    <Swiper navigation={true}>
-                        {FILM_DATA.map(film => (
+                    <Swiper navigation={true} autoplay={true}>
+                        {movies.map(film => (
                             <SwiperSlide key={film.id}>
                                 {<h1 style={{ color: 'white', position: "absolute", top: 0, zIndex: 999 }}>{film.title}</h1>}
-                                {<p style={{ width: '25%', color: 'white', position: "absolute", zIndex: 999, bottom: 0, left: 50 }}>{film.description}</p>}
-                                <img src={film.poster} alt={film.title} />
+                                {<p style={{ height:'50%', width: '25%', color: 'white', position: "absolute", zIndex: 999, bottom: 0, left: 50, overflow:'hidden',lineHeight:'25px'  }}>{film.content}</p>}
+                                <img src={film.image} alt={film.title} />
                             </SwiperSlide>
                         ))}
 
                     </Swiper>
                 </SwiperContainer>
                 <Divider style={{ backgroundColor: 'rgb(18,18,18)' }} />
-                <h1 style={{ color: 'white' }}>Featured Today:</h1>
+                <h1 style={{ color: 'white' }}>Movies:</h1>
                 <ContentContainer>
-                    {FILM_DATA.map(film => (
-                        <div key={film.id}>
+                    {allMovies.map(film => (
+                        <div key={film.id} style={{width:'fit-content', marginTop: '10px'}}>
                             <Card
                                 style={{ width: 200 }}
                                 cover={
                                     <img
                                         alt="example"
                                         style={{height:250}}
-                                        src={film.poster}
+                                        src={film.image}
                                     />
                                 }
                                 actions={[
@@ -108,7 +159,7 @@ export default function Home(props) {
                 </ContentContainer>
                 <Divider style={{ backgroundColor: 'rgb(18,18,18)' }} />
                 <Watchlist>
-                    Watchlist will go here
+                    Watchlist could go here
                 </Watchlist>
 
 

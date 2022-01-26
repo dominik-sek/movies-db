@@ -1,9 +1,10 @@
 import Navbar from "./Navbar";
 import styled from 'styled-components';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox,message } from 'antd';
 import './styles.css'
-import { rgbToHex } from "@mui/material";
 import { Link } from 'react-router-dom';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 const Container = styled.div`
@@ -16,21 +17,51 @@ const Container = styled.div`
     
 `;
 
-const onFinish = (values) => {
-  console.log('Success:', values);
-};
 
-const onFinishFailed = (errorInfo) => {
-  console.log('Failed:', errorInfo);
-};
-export default function SignIn() {
+export default function SignIn(props) {
+  const [form] = Form.useForm();
+
+  const navigate = useNavigate();
+
+  const handleChangeRoute = (token) => {
+    message.success('You will be redirected to the main page',1.5);
+      setTimeout(()=>{
+        navigate('/',{state:{isLoggedIn:true, token:token } });
+      },1500)
+
+  }
+
+  const handleLogin = () => {
+    let login = form.getFieldValue('username'); 
+    let password = form.getFieldValue('password');
+    if(login && password){
+      axios({
+        method: 'post',
+        url: 'https://pr-movies.herokuapp.com/api/user/auth',
+        data:{
+          login: login,
+          password: password
+        }
+      }).then((res) =>{
+        handleChangeRoute(res.data.token);
+
+      }).catch((error)=>{
+
+        message.error(error.response.data,1.5)
+        console.log(error.response.data)
+      })
+    }
+  }
+      //testowytest1
+    //testtest
   return (
     <>
-      <Navbar />
+      <Navbar component={"SignIn"} />
       <Container>
 
 
         <Form
+          form = {form}
           name="basic"
           style={{ width: '35%', padding: '20px', border: '1px solid white' }}
           labelCol={{
@@ -42,11 +73,9 @@ export default function SignIn() {
           initialValues={{
             remember: true,
           }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-                    <h1 style={{ color: 'white' }}> LOGO</h1>
+          <h1 style={{ color: 'white' }}> LOGO</h1>
 
           <div style={{ display: 'flex', justifyContent: 'center', padding: '15px' }}>
 
@@ -97,7 +126,7 @@ export default function SignIn() {
               span: 16,
             }}
           >
-            <Button type="primary" htmlType="submit" style={{cursor:'pointer !important'}} className="login-form-button">
+            <Button type="primary" onClick = {handleLogin} htmlType="submit" style={{ cursor: 'pointer !important' }} className="login-form-button">
               Log in
             </Button>
             Or <Link to="/signup"> register now!</Link>
